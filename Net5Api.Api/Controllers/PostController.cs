@@ -24,5 +24,12 @@ namespace Net5Api.Api.Controllers
 
             return Ok(posts);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPost(int id) {
+            var post = await _postRepository.GetPost(id);
+
+            return Ok(post);
+        }
     }
 }

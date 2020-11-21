@@ -2,10 +2,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Net5Api.Core.Interfaces;
+using Net5Api.Infrastructure.Data;
+using Net5Api.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +31,12 @@ namespace Net5Api.Api
         {
 
             services.AddControllers();
+
+            services.AddTransient<IPostRepository, PostRepository>();
+
+            services.AddDbContext<Net5ApiContext>(options => {
+                options.UseSqlServer(Configuration.GetConnectionString("Net5Api"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

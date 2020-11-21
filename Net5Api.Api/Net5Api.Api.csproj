@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Net5Api.Core\Net5Api.Core.csproj" />
+    <ProjectReference Include="..\Net5Api.Infrastructure\Net5Api.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

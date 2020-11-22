@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Net5Api.Core.DTOs;
+using Net5Api.Core.Entities;
 using Net5Api.Core.Interfaces;
 using Net5Api.Infrastructure.Repositories;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Net5Api.Api.Controllers
@@ -11,10 +15,12 @@ namespace Net5Api.Api.Controllers
     {
 
         private readonly IPostRepository _postRepository;
+        private readonly IMapper _mapper;
 
-        public PostController(IPostRepository postRepository)
+        public PostController(IPostRepository postRepository, IMapper mapper)
         {
             _postRepository = postRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -22,12 +28,19 @@ namespace Net5Api.Api.Controllers
 
             var posts = await _postRepository.GetPosts();
 
-            return Ok(posts);
+            return Ok(_mapper.Map<IEnumerable<PostDTO>>(posts));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPost(int id) {
             var post = await _postRepository.GetPost(id);
+
+            return Ok(_mapper.Map<PostDTO>(post));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post(PostDTO post) {
+            await _postRepository.InsertPost(_mapper.Map<Post>(post));
 
             return Ok(post);
         }

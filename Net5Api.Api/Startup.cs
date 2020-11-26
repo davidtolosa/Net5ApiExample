@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Net5Api.Core.Interfaces;
+using Net5Api.Core.Services;
 using Net5Api.Infrastructure.Data;
 using Net5Api.Infrastructure.Filters;
 using Net5Api.Infrastructure.Repositories;
@@ -35,15 +36,17 @@ namespace Net5Api.Api
               //  options.SuppressModelStateInvalidFilter = true;
             });
 
-            services.AddTransient<IPostRepository, PostRepository>();
-
             services.AddDbContext<Net5ApiContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("Net5Api"));
             });
 
+            services.AddTransient<IPostService, PostService>();
+            services.AddTransient<IPostRepository, PostRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+
             services.AddMvc(options =>
             {
-                options.Filters.Add<ValidationFilter>();
+               options.Filters.Add<ValidationFilter>();
             }).AddFluentValidation(options =>
             {
                 options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());

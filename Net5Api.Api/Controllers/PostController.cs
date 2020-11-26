@@ -4,7 +4,6 @@ using Net5Api.Api.Responses;
 using Net5Api.Core.DTOs;
 using Net5Api.Core.Entities;
 using Net5Api.Core.Interfaces;
-using Net5Api.Infrastructure.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,30 +14,30 @@ namespace Net5Api.Api.Controllers
     public class PostController : ControllerBase
     {
 
-        private readonly IPostRepository _postRepository;
+        private readonly IPostRepository _postService;
         private readonly IMapper _mapper;
 
-        public PostController(IPostRepository postRepository, IMapper mapper)
+        public PostController(IPostRepository postService, IMapper mapper)
         {
-            _postRepository = postRepository;
+            _postService = postService;
             _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetPosts() {
 
-            var posts = await _postRepository.GetPosts();
+           var posts = await _postService.GetPosts();
 
-            var postsDtos = _mapper.Map<IEnumerable<PostDTO>>(posts);
+             var postsDtos = _mapper.Map<IEnumerable<PostDTO>>(posts);
 
-            var response = new ApiResponse<IEnumerable<PostDTO>>(postsDtos);
-
+             var response = new ApiResponse<IEnumerable<PostDTO>>(postsDtos);
+      
             return Ok(response);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPost(int id) {
-            var post = await _postRepository.GetPost(id);
+            var post = await _postService.GetPost(id);
 
             var postDto = _mapper.Map<PostDTO>(post);
 
@@ -52,7 +51,7 @@ namespace Net5Api.Api.Controllers
 
             var post = _mapper.Map<Post>(postDTO);
 
-            await _postRepository.InsertPost(post);
+            await _postService.InsertPost(post);
 
             postDTO = _mapper.Map<PostDTO>(post);
             var reponse = new ApiResponse<PostDTO>(postDTO);
@@ -66,7 +65,7 @@ namespace Net5Api.Api.Controllers
 
             post.PostId = id;
 
-            var result = await _postRepository.UpdatePost(post);
+            var result = await _postService.UpdatePost(post);
 
             var response = new ApiResponse<bool>(result);
 
@@ -75,7 +74,7 @@ namespace Net5Api.Api.Controllers
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id) {
-            var result = await _postRepository.DeletePost(id);
+            var result = await _postService.DeletePost(id);
 
             var response = new ApiResponse<bool>(result);
 

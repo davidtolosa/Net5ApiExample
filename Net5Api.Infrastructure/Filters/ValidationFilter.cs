@@ -14,8 +14,10 @@ namespace Net5Api.Infrastructure.Filters
             if (!context.ModelState.IsValid) {
                 context.Result = new BadRequestObjectResult(context.ModelState);
 
-                await next();
+                return;
             }
+
+            await next();
         }
     }
 }

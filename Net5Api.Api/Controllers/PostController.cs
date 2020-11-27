@@ -14,10 +14,10 @@ namespace Net5Api.Api.Controllers
     public class PostController : ControllerBase
     {
 
-        private readonly IPostRepository _postService;
+        private readonly IPostService _postService;
         private readonly IMapper _mapper;
 
-        public PostController(IPostRepository postService, IMapper mapper)
+        public PostController(IPostService postService, IMapper mapper)
         {
             _postService = postService;
             _mapper = mapper;
@@ -63,7 +63,7 @@ namespace Net5Api.Api.Controllers
         public async Task<IActionResult> Put(int id, PostDTO postDTO) {
             var post = _mapper.Map<Post>(postDTO);
 
-            post.PostId = id;
+            post.Id = id;
 
             var result = await _postService.UpdatePost(post);
 

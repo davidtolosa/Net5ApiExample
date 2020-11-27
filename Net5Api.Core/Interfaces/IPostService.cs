@@ -6,14 +6,14 @@ namespace Net5Api.Core.Interfaces
 {
     public interface IPostService
     {
-        Task<IEnumerable<Post>> GetPosts();
+        public Task<bool> DeletePost(int id);
 
-        Task<Post> GetPost(int id);
+        public Task<Post> GetPost(int id);
 
-        Task InsertPost(Post post);
+        public Task<IEnumerable<Post>> GetPosts();
 
-        Task<bool> UpdatePost(Post post);
+        public Task InsertPost(Post post);
 
-        Task<bool> DeletePost(int id);
+        public Task<bool> UpdatePost(Post post);    
     }
 }

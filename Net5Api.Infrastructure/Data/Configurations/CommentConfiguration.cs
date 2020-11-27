@@ -11,11 +11,11 @@ namespace Net5Api.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Comment> builder)
         {
-            builder.HasKey(e => e.CommentId);
+            builder.HasKey(e => e.Id);
 
             builder.ToTable("Comment");
 
-            builder.Property(e => e.CommentId).ValueGeneratedNever();
+            builder.Property(e => e.Id).HasColumnName("CommentId").ValueGeneratedNever();
 
             builder.Property(e => e.Description)
                 .IsRequired()

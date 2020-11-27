@@ -11,7 +11,9 @@ namespace Net5Api.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.HasKey(e => e.UserId);
+            builder.HasKey(e => e.Id);
+
+            builder.Property(e => e.Id).HasColumnName("UserId");
 
             builder.ToTable("User");
 

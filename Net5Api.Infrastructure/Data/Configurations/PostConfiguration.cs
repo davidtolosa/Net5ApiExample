@@ -11,7 +11,9 @@ namespace Net5Api.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Post> builder)
         {
-            builder.HasKey(e => e.PostId);
+            builder.HasKey(e => e.Id);
+
+            builder.Property(e => e.Id).HasColumnName("PostId");
 
             builder.ToTable("Post");
 

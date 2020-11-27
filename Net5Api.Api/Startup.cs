@@ -13,6 +13,7 @@ using Net5Api.Infrastructure.Filters;
 using Net5Api.Infrastructure.Repositories;
 using System;
 
+
 namespace Net5Api.Api
 {
     public class Startup
@@ -41,8 +42,7 @@ namespace Net5Api.Api
             });
 
             services.AddTransient<IPostService, PostService>();
-            services.AddTransient<IPostRepository, PostRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
             services.AddMvc(options =>
             {

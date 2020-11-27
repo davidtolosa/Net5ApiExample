@@ -43,6 +43,7 @@ namespace Net5Api.Api
 
             services.AddTransient<IPostService, PostService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddMvc(options =>
             {

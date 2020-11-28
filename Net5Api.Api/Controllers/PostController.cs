@@ -4,7 +4,10 @@ using Net5Api.Api.Responses;
 using Net5Api.Core.DTOs;
 using Net5Api.Core.Entities;
 using Net5Api.Core.Interfaces;
+using Net5Api.Core.QueryFilters;
+using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Net5Api.Api.Controllers
@@ -24,9 +27,11 @@ namespace Net5Api.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPosts() {
+        [ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDTO>>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse<IEnumerable<PostDTO>>))]
+        public IActionResult GetPosts([FromQuery] PostQueryFilter filters) {
 
-           var posts = await _postService.GetPosts();
+           var posts = _postService.GetPosts(filters);
 
              var postsDtos = _mapper.Map<IEnumerable<PostDTO>>(posts);
 

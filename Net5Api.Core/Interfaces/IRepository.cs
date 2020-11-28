@@ -9,11 +9,11 @@ namespace Net5Api.Core.Interfaces
         public Task Add(T entity);
 
         public Task Delete(int id);
-
-        public Task<IEnumerable<T>> GetAll();
+        
+        IEnumerable<T> GetAll();
 
         public Task<T> GetById(int id);
 
-        public Task Update(T entity);
+        public void Update(T entity);
     }
 }

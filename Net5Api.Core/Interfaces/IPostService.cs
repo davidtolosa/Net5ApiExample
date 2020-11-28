@@ -1,4 +1,5 @@
 ﻿using Net5Api.Core.Entities;
+using Net5Api.Core.QueryFilters;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace Net5Api.Core.Interfaces
 
         public Task<Post> GetPost(int id);
 
-        public Task<IEnumerable<Post>> GetPosts();
+        public IEnumerable<Post> GetPosts(PostQueryFilter filters);
 
         public Task InsertPost(Post post);
 

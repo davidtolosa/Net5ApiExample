@@ -3,6 +3,7 @@ using Net5Api.Core.Entities;
 using Net5Api.Core.Interfaces;
 using Net5Api.Infrastructure.Data;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Net5Api.Infrastructure.Repositories
@@ -10,7 +11,7 @@ namespace Net5Api.Infrastructure.Repositories
     public class BaseRepository<T> : IRepository<T> where T : BaseEntity
     {
         private readonly Net5ApiContext _context;
-        private readonly DbSet<T> _entities;
+        protected readonly DbSet<T> _entities;
 
         public BaseRepository(Net5ApiContext context)
         {
@@ -20,21 +21,18 @@ namespace Net5Api.Infrastructure.Repositories
 
         public async Task Add(T entity)
         {
-            _entities.Add(entity);
-            await _context.SaveChangesAsync();
+            await _entities.AddAsync(entity);
         }
 
         public async Task Delete(int id)
         {
             T entity = await GetById(id);
             _entities.Remove(entity);
-
-            await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public IEnumerable<T> GetAll()
         {
-            return await _entities.ToListAsync();
+            return _entities.AsEnumerable();
         }
 
         public async Task<T> GetById(int id)
@@ -42,10 +40,9 @@ namespace Net5Api.Infrastructure.Repositories
             return await _entities.FindAsync(id);
         }
 
-        public async Task Update(T entity)
+        public void Update(T entity)
         {
             _entities.Update(entity);
-            await _context.SaveChangesAsync();
         }
     }
 }

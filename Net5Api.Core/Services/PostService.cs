@@ -1,7 +1,10 @@
 ﻿using Net5Api.Core.Entities;
+using Net5Api.Core.Exceptions;
 using Net5Api.Core.Interfaces;
+using Net5Api.Core.QueryFilters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Net5Api.Core.Services
@@ -27,17 +30,41 @@ namespace Net5Api.Core.Services
             return await _unitOfWork.PostRepository.GetById(id);
         }
 
-        public async Task<IEnumerable<Post>> GetPosts()
+        public IEnumerable<Post> GetPosts(PostQueryFilter filters)
         {
-            return await _unitOfWork.PostRepository.GetAll();
+            var posts = _unitOfWork.PostRepository.GetAll();
+
+            if (filters.UserId != null) {
+                posts = posts.Where(p => p.UserId == filters.UserId);
+            }
+
+            if (filters.Date != null) {
+                posts = posts.Where(p => p.Date.ToShortDateString() == filters.Date?.ToShortDateString());
+            }
+
+            if (filters.Description != null) {
+                posts = posts.Where(p => p.Description.ToLower().Contains(filters.Description.ToLower()));
+            }
+
+            return posts;
         }
 
         public async Task InsertPost(Post post)
         {
             var user = _unitOfWork.UserRepository.GetById(post.UserId);
             if (user == null) {
-                throw new Exception("User doesn't exist");
+                throw new BusinessException("User doesn't exist");
             }
+
+            var userPosts = await _unitOfWork.PostRepository.GetPostsByUser(post.UserId);
+            if (userPosts.Count() < 10)
+            {
+                var lastPost = userPosts.OrderByDescending(p => p.Date).LastOrDefault();
+                if ((lastPost.Date - DateTime.Now).TotalDays < 7) {
+                    throw new BusinessException("You are not able to publish the post");
+                }
+            }
+
 
             if (post.Description.Contains("Sexo")) {
                 throw new Exception("Content not allowed");
@@ -48,7 +75,9 @@ namespace Net5Api.Core.Services
 
         public async Task<bool> UpdatePost(Post post)
         {
-            await _unitOfWork.PostRepository.Update(post);
+            _unitOfWork.PostRepository.Update(post);
+            await _unitOfWork.SaveChangesAsync();
+
             return true;
         }
     }

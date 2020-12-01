@@ -1,4 +1,5 @@
-﻿using Net5Api.Core.Entities;
+﻿using Net5Api.Core.CustomEntities;
+using Net5Api.Core.Entities;
 using Net5Api.Core.Exceptions;
 using Net5Api.Core.Interfaces;
 using Net5Api.Core.QueryFilters;
@@ -30,7 +31,7 @@ namespace Net5Api.Core.Services
             return await _unitOfWork.PostRepository.GetById(id);
         }
 
-        public IEnumerable<Post> GetPosts(PostQueryFilter filters)
+        public PagedList<Post> GetPosts(PostQueryFilter filters)
         {
             var posts = _unitOfWork.PostRepository.GetAll();
 
@@ -46,7 +47,9 @@ namespace Net5Api.Core.Services
                 posts = posts.Where(p => p.Description.ToLower().Contains(filters.Description.ToLower()));
             }
 
-            return posts;
+            var pagedPosts = PagedList<Post>.Create(posts, filters.PageNumber, filters.PageSize);
+
+            return pagedPosts;
         }
 
         public async Task InsertPost(Post post)

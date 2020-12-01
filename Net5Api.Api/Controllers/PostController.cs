@@ -5,6 +5,7 @@ using Net5Api.Core.DTOs;
 using Net5Api.Core.Entities;
 using Net5Api.Core.Interfaces;
 using Net5Api.Core.QueryFilters;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -33,10 +34,21 @@ namespace Net5Api.Api.Controllers
 
            var posts = _postService.GetPosts(filters);
 
-             var postsDtos = _mapper.Map<IEnumerable<PostDTO>>(posts);
+            var postsDtos = _mapper.Map<IEnumerable<PostDTO>>(posts);
 
-             var response = new ApiResponse<IEnumerable<PostDTO>>(postsDtos);
-      
+            var response = new ApiResponse<IEnumerable<PostDTO>>(postsDtos);
+
+            var metadata = new
+            {
+                posts.TotalCount,
+                posts.PageSize,
+                posts.CurrentPage,
+                posts.HasNextPage,
+                posts.HasPreviousPage
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
             return Ok(response);
         }
 

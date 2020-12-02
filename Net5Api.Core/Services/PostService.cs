@@ -1,4 +1,5 @@
-﻿using Net5Api.Core.CustomEntities;
+﻿using Microsoft.Extensions.Options;
+using Net5Api.Core.CustomEntities;
 using Net5Api.Core.Entities;
 using Net5Api.Core.Exceptions;
 using Net5Api.Core.Interfaces;
@@ -14,10 +15,12 @@ namespace Net5Api.Core.Services
     {
 
         private readonly IUnitOfWork _unitOfWork;
+        private readonly PaginationOptions _paginationOptions;
 
-        public PostService(IUnitOfWork unitOfWork)
+        public PostService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> paginationOptions)
         {
             _unitOfWork = unitOfWork;
+            _paginationOptions = paginationOptions.Value;
         }
 
         public async Task<bool> DeletePost(int id)
@@ -33,6 +36,9 @@ namespace Net5Api.Core.Services
 
         public PagedList<Post> GetPosts(PostQueryFilter filters)
         {
+            filters.PageNumber = filters.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filters.PageNumber;
+            filters.PageSize = filters.PageSize == 0 ? _paginationOptions.DefaultPageSize : filters.PageSize;
+
             var posts = _unitOfWork.PostRepository.GetAll();
 
             if (filters.UserId != null) {

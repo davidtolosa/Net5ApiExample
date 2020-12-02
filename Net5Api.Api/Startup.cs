@@ -2,15 +2,19 @@ using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Net5Api.Core.CustomEntities;
 using Net5Api.Core.Interfaces;
 using Net5Api.Core.Services;
 using Net5Api.Infrastructure.Data;
 using Net5Api.Infrastructure.Filters;
+using Net5Api.Infrastructure.Interfaces;
 using Net5Api.Infrastructure.Repositories;
+using Net5Api.Infrastructure.Services;
 using System;
 
 
@@ -36,9 +40,12 @@ namespace Net5Api.Api
                 
             }).AddNewtonsoftJson(options => {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
             }).ConfigureApiBehaviorOptions(options => {
               //  options.SuppressModelStateInvalidFilter = true;
             });
+
+            services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
 
             services.AddDbContext<Net5ApiContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("Net5Api"));
@@ -47,6 +54,12 @@ namespace Net5Api.Api
             services.AddTransient<IPostService, PostService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<IUriService>(provider => {
+                var accesor = provider.GetRequiredService<IHttpContextAccessor>();
+                var request = accesor.HttpContext.Request;
+                var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+                return new UriService(absoluteUri);
+            });
 
             services.AddMvc(options =>
             {

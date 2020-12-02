@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Net5Api.Api.Responses;
 using Net5Api.Core.CustomEntities;
@@ -7,14 +8,13 @@ using Net5Api.Core.Entities;
 using Net5Api.Core.Interfaces;
 using Net5Api.Core.QueryFilters;
 using Net5Api.Infrastructure.Interfaces;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Net5Api.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PostController : ControllerBase

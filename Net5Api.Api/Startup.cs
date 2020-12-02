@@ -1,5 +1,6 @@
 using AutoMapper;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Net5Api.Core.CustomEntities;
 using Net5Api.Core.Interfaces;
 using Net5Api.Core.Services;
@@ -16,7 +19,7 @@ using Net5Api.Infrastructure.Interfaces;
 using Net5Api.Infrastructure.Repositories;
 using Net5Api.Infrastructure.Services;
 using System;
-
+using System.Text;
 
 namespace Net5Api.Api
 {
@@ -61,6 +64,30 @@ namespace Net5Api.Api
                 return new UriService(absoluteUri);
             });
 
+            services.AddSwaggerGen(options => {
+                options.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title ="Net 5 Api Example", Version = "v1"
+                });
+            
+            });
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options => {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["Authentication:Issuer"],
+                    ValidAudience = Configuration["Authentication:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Authentication:SecretKey"]))
+                };
+            });
+
             services.AddMvc(options =>
             {
                options.Filters.Add<ValidationFilter>();
@@ -80,10 +107,17 @@ namespace Net5Api.Api
 
             app.UseHttpsRedirection();
 
+            app.UseSwagger();
+            app.UseSwaggerUI(options => {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Net 5 Api Example");
+                options.RoutePrefix = string.Empty;
+            });
+
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
+        
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

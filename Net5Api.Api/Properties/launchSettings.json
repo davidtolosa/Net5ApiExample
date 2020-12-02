@@ -20,7 +20,6 @@
     "Net5Api.Api": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/post",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

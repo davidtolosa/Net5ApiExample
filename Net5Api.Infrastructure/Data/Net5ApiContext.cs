@@ -30,6 +30,8 @@ namespace Net5Api.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new PostConfiguration());
 
             modelBuilder.ApplyConfiguration(new UserConfiguration());
+
+            modelBuilder.ApplyConfiguration(new SecurityConfiguration());
         }
     }
 }

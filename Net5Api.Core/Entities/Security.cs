@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Net5Api.Core.Entities
 {
-    public class UserLogin
+    public class Security : BaseEntity
     {
         public string Email { get; set; }
         public string Password { get; set; }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Net5Api.Core.Entities
+namespace Net5Api.Core.DTOs
 {
-    public class UserLogin
+    public class SecurityDTO
     {
         public string Email { get; set; }
         public string Password { get; set; }

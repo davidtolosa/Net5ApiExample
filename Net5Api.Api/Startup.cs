@@ -16,6 +16,7 @@ using Net5Api.Core.Services;
 using Net5Api.Infrastructure.Data;
 using Net5Api.Infrastructure.Filters;
 using Net5Api.Infrastructure.Interfaces;
+using Net5Api.Infrastructure.Options;
 using Net5Api.Infrastructure.Repositories;
 using Net5Api.Infrastructure.Services;
 using System;
@@ -49,6 +50,7 @@ namespace Net5Api.Api
             });
 
             services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
+            services.Configure<PasswordOptions>(Configuration.GetSection("PasswordOptions"));
 
             services.AddDbContext<Net5ApiContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("Net5Api"));

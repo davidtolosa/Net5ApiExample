@@ -5,6 +5,7 @@ using Net5Api.Api.Responses;
 using Net5Api.Core.DTOs;
 using Net5Api.Core.Entities;
 using Net5Api.Core.Interfaces;
+using Net5Api.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +19,13 @@ namespace Net5Api.Api.Controllers
     {
         private readonly ISecurityService _securityService;
         private readonly IMapper _mapper;
-        public SecurityController(ISecurityService securityService, IMapper mapper)
+        private readonly IPassworService _passwordService;
+
+        public SecurityController(ISecurityService securityService, IMapper mapper, IPassworService passworService)
         {
             _securityService = securityService;
             _mapper = mapper;
+            _passwordService = passworService;
         }
 
         [HttpPost]
@@ -29,11 +33,11 @@ namespace Net5Api.Api.Controllers
 
             var security = _mapper.Map<Security>(securityDTO);
 
+            security.Password = _passwordService.Hash(security.Password);
+
             await _securityService.RegisterUser(security);
 
-            var response = new ApiResponse<SecurityDTO>(securityDTO);
-
-            return Ok(response);
+            return Ok();
         }
     }
 }

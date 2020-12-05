@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Net5Api.Core.Entities;
 using Net5Api.Core.Interfaces;
+using Net5Api.Infrastructure.Interfaces;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -19,10 +20,12 @@ namespace Net5Api.Api.Controllers
 
         private readonly IConfiguration _configuration;
         private readonly ISecurityService _securityService;
-        public TokenController(IConfiguration configuration, ISecurityService securityService)
+        private readonly IPassworService _passwordService;
+        public TokenController(IConfiguration configuration, ISecurityService securityService, IPassworService passwordService)
         {
             _configuration = configuration;
             _securityService = securityService;
+            _passwordService = passwordService;
         }
 
         [HttpPost]
@@ -39,7 +42,9 @@ namespace Net5Api.Api.Controllers
 
         private async Task<(bool, Security)> IsValidUser(UserLogin userLogin) {
             var user = await _securityService.GetLoginByCredentials(userLogin);
-            return (user != null, user);
+            var isValid = _passwordService.Check(user.Password, userLogin.Password);
+
+            return (isValid, user);
         }
 
         private string GenerateToken(Security security) {

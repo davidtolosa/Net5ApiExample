@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Net5Api.Infrastructure.Interfaces
 {
-    public interface IPasswordHasher
+    public interface IPassworService
     {
         string Hash(string password);
         bool Check(string hash, string password);

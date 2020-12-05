@@ -12,7 +12,7 @@ namespace Net5Api.Infrastructure.Repositories
 
         public async Task<Security> GetLoginByCredentials(UserLogin userLogin)
         {
-            return await _entities.FirstOrDefaultAsync(u => u.Email == userLogin.Email && u.Password == userLogin.Password);
+            return await _entities.FirstOrDefaultAsync(u => u.Email == userLogin.Email);
         }
     }
 }

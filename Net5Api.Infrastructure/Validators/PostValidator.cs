@@ -14,6 +14,10 @@ namespace Net5Api.Infrastructure.Validators
             RuleFor(post => post.Description)
                 .NotNull()
                 .Length(10, 500);
+
+            RuleFor(post => post.Date)
+                .NotNull()
+                .LessThan(DateTime.Now);
         }
     }
 }
